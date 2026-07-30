@@ -38,6 +38,7 @@ export default function HomeScreen() {
             Welcome to&nbsp;Expo
           </ThemedText>
         </ThemedView>
+          <ThemedText>Olá, Plant Buddy! 🌿 Meu app está funcionando!</ThemedText>
 
         <ThemedText type="code" style={styles.code}>
           get started
