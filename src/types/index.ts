@@ -10,7 +10,7 @@ export type Task = {
 export type Agenda = {
     id: string;
     name: string;
-    currency: 'diaria' | 'semanal'; //apenas essas duas opções vão existir no projeto
+    frequency: 'diaria' | 'semanal'; //apenas essas duas opções vão existir no projeto
     tasks: Task[]; //cria uma lista de objetos Tarefa para uma agenda
     //cada agenda tem uma e apenas uma planta associada a ela
     plant: {
