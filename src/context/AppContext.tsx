@@ -61,13 +61,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
         }));
     }
 
-    function addTask(title: string){
+    function addTask(title: string, description?: string){
         setUser((prev) => {
             const newAgendas = prev.agendas.map(agenda => { //varre todas as agendas com o map
                 if(agenda.id === activeAgenda) { //achando a tarefa ativa, adiciona a nova task
                     const newTask: Task = {
                         id: Math.random().toString(),
                         title: title,
+                        description: description,
                         done: false
                     };
                     return {...agenda, tasks: [...agenda.tasks, newTask]}; //retorna com tudo que já tinha antes e a nova tarefa
