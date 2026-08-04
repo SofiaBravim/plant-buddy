@@ -19,6 +19,7 @@ export type Agenda = {
         stageNow: number; //vai de 0 até total de estágios (imagens) - 1
         maxStage: boolean; //se a planta já chegou em seu estágio máximo
     };
+    lastResetAt: number; //registra quando a agenda foi criada
 };
 
 export type User = {

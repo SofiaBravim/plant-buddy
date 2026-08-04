@@ -3,7 +3,7 @@ Utilizando 3 partes principais para compôr o Context API:
 1 - O contexto (AppContext): o canal de transmissão
 2 - O provedor (AppProvider): o "pai" que guarda as informações reais com useState e abrange o app inteiro
 3 - O hook customizado (useApp): um atalho que puxa os dados em qualquer tela*/
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { User, Agenda, Task } from '@/types';
 
 //Interface de AppContext
@@ -34,7 +34,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 name: 'Solzinho',
                 stageNow: 0,
                 maxStage: false
-            }}
+            },
+            lastResetAt: Date.now()}
         ]
     });
 
@@ -51,7 +52,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 name: plantName,
                 stageNow: 0,
                 maxStage: false
-            }
+            },
+            lastResetAt: Date.now()
         };
     
         //adiciona a nova agenda às existentes
