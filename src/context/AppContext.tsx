@@ -131,6 +131,34 @@ export function AppProvider({ children }: { children: ReactNode }) {
         });
     }
 
+    useEffect(() =>{
+        const now = Date.now();
+        const ONE_DAY_MS = 24 * 60 * 60 * 1000; //milissegundos em um dia
+        const ONE_WEEK_MS = 7 * ONE_DAY_MS; //milissegundos em uma semana
+
+        setUser((prev) => ({
+            ...prev,
+            agendas: prev.agendas.map((agenda) => {
+                const limit = agenda.frequency === 'diaria' ? ONE_DAY_MS: ONE_WEEK_MS; //se a agenda for diária, reseta em 24h, se for semanal, em 7 dias
+                const timePassed = now - (agenda.lastResetAt || now);
+
+                if(timePassed >= limit){
+                    return {
+                        ...agenda, 
+                        lastResetAt: now, //reinicia a contagem do tempo
+                        tasks: agenda.tasks.filter((task) => !task.done), //deixa na lista apenas as tarefas que não foram concluidas ainda
+                        plant: {
+                            ...agenda.plant,
+                            stageNow: 0, //volta ao estágio inicial
+                            maxStage: false,
+                        },
+                    };
+                }
+                return agenda;
+            }),
+        }));
+    }, []); //Executa automaticamente abrindo o app
+
     return (
         <AppContext.Provider value={{
             user,
