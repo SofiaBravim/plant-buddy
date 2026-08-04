@@ -115,9 +115,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
                     }
                 };
             });
+
+            const newXP = Math.max(0, prev.xp + xpGain); //calcula o novo xp
+            const calculatedLevel = Math.floor(Math.max(0, prev.xp + xpGain) / 100) + 1; //recalcula o nível do usuário onde a cada 100 xp, sobe um nível
+            const newLevel = Math.min(150, calculatedLevel); //nunca passa do nível 150
+
             return {
                 ...prev, 
-                xp: prev.xp + xpGain, //atualiza o XP do usuário
+                xp: newXP,
+                level: newLevel,
                 agendas:newAgendas
             };
         });
