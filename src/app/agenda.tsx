@@ -30,7 +30,8 @@ export default function AgendaScreen(){
       style={styles.container} 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <View style={styles.header}> //cabeçalho da agenda
+      //cabeçalho da agenda
+      <View style={styles.header}> 
         <Text style={styles.headerTitle}>{currentAgenda.name}</Text>
         <Text style={styles.headerSubtitle}>
           Planta atual: {currentAgenda.plant.name} ({currentAgenda.plant.species})
@@ -61,7 +62,8 @@ export default function AgendaScreen(){
         }
       />
 
-      <View style={styles.inputContainer}> //criação de uma nova tarefa
+      //criação de uma nova tarefa
+      <View style={styles.inputContainer}> 
         <TextInput
           style={styles.input}
           placeholder="O que vamos fazer hoje?"
