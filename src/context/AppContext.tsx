@@ -39,6 +39,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         ]
     });
 
+    //const [activeAgenda, setActiveAgendaId] = useState<string>('1'); //apenas para testes
     const [activeAgenda, setActiveAgendaId] = useState<string>('');
 
     function addAgenda(name: string, frequency: 'diaria' | 'semanal', plantName: string, plantSpecies: string){

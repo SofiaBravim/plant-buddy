@@ -33,7 +33,7 @@ export default function AgendaScreen(){
       <View style={styles.header}> //cabeçalho da agenda
         <Text style={styles.headerTitle}>{currentAgenda.name}</Text>
         <Text style={styles.headerSubtitle}>
-          Cultivando: {currentAgenda.plant.name} ({currentAgenda.plant.species})
+          Planta atual: {currentAgenda.plant.name} ({currentAgenda.plant.species})
         </Text>
       </View>
 
@@ -89,19 +89,20 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   header: {
-    paddingTop: 40,
+    paddingTop: 30,
     paddingHorizontal: 24,
     paddingBottom: 20,
   },
   headerTitle: {
     fontSize: 32,
-    color: '#42372d', // Marrom quente escuro
+    color: '#3a322a', // Marrom quente escuro
     fontWeight: 'bold',
     // fontFamily: colocar uma aqui
   },
   headerSubtitle: {
     fontSize: 16,
-    color: '#88af90', // Verde sálvia
+    color: '#69a064', // Verde sálvia
+    fontWeight: 'bold',
     marginTop: 4,
   },
   listContainer: {
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
   taskCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#ffffff',
     padding: 16,
     borderRadius: 16,
     marginBottom: 12,
@@ -124,7 +125,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   taskCardDone: {
-    backgroundColor: '#F4F1EA',
+    backgroundColor: '#fffaef',
     borderColor: 'transparent',
     elevation: 0,
     shadowOpacity: 0,
@@ -134,13 +135,13 @@ const styles = StyleSheet.create({
     height: 26,
     borderRadius: 13,
     borderWidth: 2,
-    borderColor: '#8DA399',
+    borderColor: '#65a177',
     marginRight: 12,
     justifyContent: 'center',
     alignItems: 'center',
   },
   checkboxDone: {
-    backgroundColor: '#8DA399',
+    backgroundColor: '#65a177',
   },
   taskTitle: {
     fontSize: 16,
@@ -148,14 +149,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   taskTitleDone: {
-    color: '#A89F91',
+    color: '#817f7a',
     textDecorationLine: 'line-through',
   },
   inputContainer: {
     flexDirection: 'row',
     padding: 24,
     paddingBottom: Platform.OS === 'ios' ? 40 : 24, // Evita cortar no iPhone
-    backgroundColor: '#FBF7E9',
+    backgroundColor: '#fcf6e2',
+    //colocar uma borda
   },
   input: {
     flex: 1,
@@ -173,11 +175,11 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#8DA399',
+    backgroundColor: '#67a071',
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 2,
-    shadowColor: '#8DA399',
+    shadowColor: '#789186',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
