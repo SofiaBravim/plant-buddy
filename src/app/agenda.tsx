@@ -30,7 +30,7 @@ export default function AgendaScreen(){
       style={styles.container} 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      //cabeçalho da agenda
+      {/*cabeçalho da agenda*/}
       <View style={styles.header}> 
         <Text style={styles.headerTitle}>{currentAgenda.name}</Text>
         <Text style={styles.headerSubtitle}>
@@ -62,7 +62,7 @@ export default function AgendaScreen(){
         }
       />
 
-      //criação de uma nova tarefa
+      {/*criação de uma nova tarefa*/}
       <View style={styles.inputContainer}> 
         <TextInput
           style={styles.input}
