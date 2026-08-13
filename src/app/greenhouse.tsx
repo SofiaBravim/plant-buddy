@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TouchableOpacity, 
-  FlatList, 
-  Modal,
-  Animated,
-  Easing
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Modal, Animated, Easing, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useApp } from '../context/AppContext';
+
+// Mapeamento dos caminhos estáticos dos PNGs
+const PLANT_IMAGES: Record<string, Record<number, any>> = {
+  girassol: {
+    0: require('../../assets/plants/sunflower/stage_0.png'),
+    1: require('../../assets/plants/sunflower/stage_1g.png'),
+    2: require('../../assets/plants/sunflower/stage_2g.png'),
+    3: require('../../assets/plants/sunflower/stage_3g.png'),
+  },
+};
 
 //criando protótipo de banco de dados pras cores do vaso
 
@@ -34,16 +35,16 @@ export default function GreenhouseScreen() {
   // Vaso Selecionado
   const [selectedPot, setSelectedPot] = useState(POT_COLORS[0].id);
 
-  // Valores de Animação
+  // Animações
   const wateringAnimation = useRef(new Animated.Value(0)).current;
   const plantScale = useRef(new Animated.Value(1)).current;
   const previousStage = useRef(currentAgenda?.plant.stageNow || 0);
 
-  // Cálculo da Barra de XP
+  // Cálculo de XP
   const progressPercentage = user.xp % 100; 
   const nextLevel = user.level + 1;
 
-  // Separa e ordena os vasos
+  // Separa e ordena vasos
   const sortedPots = [...POT_COLORS].sort((a, b) => {
     const aUnlocked = user.level >= a.unlockLevel;
     const bUnlocked = user.level >= b.unlockLevel;
@@ -51,10 +52,9 @@ export default function GreenhouseScreen() {
     return aUnlocked ? -1 : 1;
   });
 
-  // Cor atual do vaso
-  const currentPotHex = POT_COLORS.find(p => p.id === selectedPot)?.hex || '#D9C5B2';
+  const currentPotHex = POT_COLORS.find(p => p.id === selectedPot)?.hex || '#d9c5b2';
 
-  // Animação de crescimento (Regador)
+  // Animação de regar
   useEffect(() => {
     if (currentAgenda && currentAgenda.plant.stageNow > previousStage.current) {
       Animated.sequence([
@@ -92,14 +92,19 @@ export default function GreenhouseScreen() {
     outputRange: ['0deg', '-45deg'] 
   });
 
+  // Busca a imagem de acordo com a espécie e estágio atual
+  const speciesKey = currentAgenda.plant.species.toLowerCase();
+  const currentStage = currentAgenda.plant.stageNow ?? 0;
+  const plantImageSource = PLANT_IMAGES[speciesKey]?.[currentStage];
+
   return (
     <View style={styles.container}>
       
-      {/* TOPO: Botão de Trocar Planta + Barra de XP */}
+      {/* TOPO: Botão Trocar Planta + Barra de XP */}
       <View style={styles.topBar}>
         <View style={styles.actionButtonContainer}>
           <TouchableOpacity style={styles.circleButton} onPress={() => setPlantModalVisible(true)}>
-            <Ionicons name="storefront-outline" size={24} color="#4A3F35" />
+            <Ionicons name="storefront-outline" size={24} color="#683607" />
           </TouchableOpacity>
           <Text style={styles.buttonSubtext}>Trocar Planta</Text>
         </View>
@@ -113,7 +118,7 @@ export default function GreenhouseScreen() {
         </View>
       </View>
 
-      {/* ÁREA CENTRAL: A Planta em Grande Destaque */}
+      {/* ÁREA CENTRAL: Exibição da Imagem da Planta + Vaso */}
       <View style={styles.plantDisplayArea}>
         
         {/* Regador Animado */}
@@ -124,36 +129,51 @@ export default function GreenhouseScreen() {
             transform: [{ rotate: wateringRotate }]
           }
         ]}>
-          <Ionicons name="water-outline" size={48} color="#7BA0C0" />
+          <Ionicons name="water-outline" size={70} color="#7acadf" />
         </Animated.View>
 
-        {/* Planta + Vaso Estilizado */}
-        <Animated.View style={[styles.plantContainer, { transform: [{ scale: plantScale }] }]}>
-          {/* Planta (Aumentada em destaque) */}
-          <Ionicons name="leaf" size={150} color="#8DA399" />
+        {/* Container Ilustração + Vaso */}
+        <Animated.View style={[styles.plantWrapper, { transform: [{ scale: plantScale }] }]}>
           
-          {/* Design Realista do Vaso (Aba + Corpo Tapered) */}
+          <View style={styles.plantImageContainer}>
+            {plantImageSource ? (
+              <Image 
+                source={plantImageSource} 
+                style={styles.plantImage} 
+                resizeMode="contain" 
+              />
+            ) : (
+              <Ionicons name="leaf" size={180} color="#4b974b" />
+            )}
+          </View>
+          
+          {/* Vaso */}
           <View style={styles.potWrapper}>
             <View style={[styles.potRim, { backgroundColor: currentPotHex }]} />
             <View style={[styles.potBody, { backgroundColor: currentPotHex }]} />
           </View>
-        </Animated.View>
 
-        <Text style={styles.plantName}>{currentAgenda.plant.name}</Text>
-        <Text style={styles.plantSpecies}>{currentAgenda.plant.species}</Text>
+        </Animated.View>
       </View>
 
-      {/* PARTE INFERIOR: Botão de Trocar Cor (Alinhado à esquerda no rodapé) */}
+      {/* RODAPÉ: Botão Trocar Cor + Nome da Planta */}
       <View style={styles.bottomBar}>
         <View style={styles.actionButtonContainer}>
           <TouchableOpacity style={styles.circleButton} onPress={() => setPotModalVisible(true)}>
-            <Ionicons name="color-palette-outline" size={24} color="#4A3F35" />
+            <Ionicons name="color-palette-outline" size={24} color="#683607" />
           </TouchableOpacity>
           <Text style={styles.buttonSubtext}>Trocar Cor</Text>
         </View>
+
+        <View style={styles.plantInfoContainer}>
+          <Text style={styles.plantName}>{currentAgenda.plant.name}</Text>
+          <Text style={styles.plantSpecies}>{currentAgenda.plant.species}</Text>
+        </View>
+
+        <View style={{ width: 48 }} />
       </View>
 
-      {/* MODAL 1: Trocar de Agenda/Planta */}
+      {/* MODAL 1: Trocar Planta */}
       <Modal visible={plantModalVisible} transparent={true} animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -210,7 +230,7 @@ export default function GreenhouseScreen() {
                     <View style={[styles.potColorPreview, { backgroundColor: item.hex }]}>
                       {!isUnlocked && (
                         <View style={styles.lockOverlay}>
-                          <Ionicons name="lock-closed" size={22} color="#A89F91" />
+                          <Ionicons name="lock-closed" size={22} color="#868686" />
                         </View>
                       )}
                     </View>
@@ -244,10 +264,9 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 18,
-    color: '#A89F91',
+    color: '#8d8982',
   },
   
-  /* Botões e Texto Auxiliar */
   actionButtonContainer: {
     alignItems: 'center',
   },
@@ -268,12 +287,11 @@ const styles = StyleSheet.create({
   },
   buttonSubtext: {
     fontSize: 11,
-    color: '#4A3F35',
+    color: '#3b2510',
     marginTop: 4,
     fontWeight: '500',
   },
 
-  /* Topo (Barra de XP e Botão Superior) */
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -301,36 +319,47 @@ const styles = StyleSheet.create({
   },
   xpBarFill: {
     height: '100%',
-    backgroundColor: '#8DA399',
+    backgroundColor: '#8abec2',
     borderRadius: 6,
   },
 
-  /* Área Central */
   plantDisplayArea: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'center',
+    paddingBottom: 8,
   },
   wateringCanContainer: {
     position: 'absolute',
     top: 20,
-    right: 60,
+    right: 50,
     zIndex: 10,
   },
-  plantContainer: {
+  plantWrapper: {
     alignItems: 'center',
-    marginBottom: 24,
+    justifyContent: 'flex-end',
+    width: '100%',
+    height: '85%',
+  },
+  plantImageContainer: {
+    flex: 1,
+    width: '100%',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  plantImage: {
+    width: '100%',
+    height: '100%',
   },
 
-  /* Design do Vaso Estilizado */
   potWrapper: {
     alignItems: 'center',
-    marginTop: -16, // Encaixa com a base da planta
+    marginTop: -18,
   },
   potRim: {
-    width: 120,
-    height: 18,
-    borderRadius: 8,
+    width: 130,
+    height: 20,
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: 'rgba(0,0,0,0.08)',
     elevation: 3,
@@ -341,35 +370,41 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   potBody: {
-    width: 102,
-    height: 85,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
+    width: 110,
+    height: 90,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
     marginTop: -3,
     borderWidth: 1,
     borderColor: 'rgba(0,0,0,0.08)',
   },
 
+  bottomBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 24,
+    paddingBottom: 20,
+  },
+  plantInfoContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   plantName: {
-    fontSize: 34,
+    fontSize: 26,
     fontWeight: 'bold',
     color: '#4A3F35',
+    textAlign: 'center',
   },
   plantSpecies: {
-    fontSize: 18,
-    color: '#8DA399',
+    fontSize: 15,
+    color: '#7d8f87',
     fontStyle: 'italic',
-    marginTop: 4,
+    marginTop: 2,
+    textAlign: 'center',
   },
 
-  /* Parte Inferior (Trocar Cor) */
-  bottomBar: {
-    paddingHorizontal: 24,
-    paddingBottom: 24,
-    alignItems: 'flex-start', // Alinha com o botão da estufa no topo esquerdo
-  },
-
-  /* Estilos dos Modais */
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(74, 63, 53, 0.4)',
@@ -387,7 +422,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#4A3F35',
+    color: '#4a3f35',
     marginBottom: 20,
     textAlign: 'center',
   },
@@ -400,16 +435,14 @@ const styles = StyleSheet.create({
     borderColor: '#E8E1D5',
   },
   modalOptionActive: {
-    borderColor: '#8DA399',
+    borderColor: '#8da399',
     backgroundColor: '#F4F1EA',
   },
   modalOptionText: {
     fontSize: 16,
-    color: '#4A3F35',
+    color: '#4a3f35',
     textAlign: 'center',
   },
-  
-  /* Grid de Vasos no Modal */
   potOption: {
     flex: 1,
     alignItems: 'center',
@@ -443,17 +476,16 @@ const styles = StyleSheet.create({
   },
   unlockText: {
     fontSize: 12,
-    color: '#A89F91',
+    color: '#797570',
     marginTop: 6,
   },
-
   closeModalButton: {
     marginTop: 16,
     paddingVertical: 12,
   },
   closeModalText: {
     fontSize: 16,
-    color: '#A89F91',
+    color: '#69655e',
     textAlign: 'center',
     fontWeight: 'bold',
   }
